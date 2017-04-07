@@ -23,8 +23,7 @@ const styleSheet = createStyleSheet('BasicTabs', (theme) => ({
     marginTop: 30,
   },
   appBar: {
-    backgroundColor: theme.palette.primary[500],
-    color: theme.palette.getContrastText(theme.palette.primary[500]),
+    backgroundColor: theme.palette.background.appBar,
   },
 }));
 
