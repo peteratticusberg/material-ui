@@ -27,7 +27,7 @@ export const styleSheet = createStyleSheet('MuiTab', (theme) => {
       color: theme.palette.text.secondary,
     },
     rootAccentSelected: {
-      color: theme.palette.accent[500],
+      color: theme.palette.primary[500],
     },
     rootAccentDisabled: {
       color: theme.palette.text.disabled,
