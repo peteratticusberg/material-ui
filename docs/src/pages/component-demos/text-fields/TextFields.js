@@ -34,12 +34,14 @@ export default class TextFields extends Component {
           label="Name"
           className={classes.input}
           value={this.state.name}
+          multiLine
           onChange={(event) => this.setState({ name: event.target.value })}
         />
         <TextField
           id="uncontrolled"
           label="Uncontrolled"
           defaultValue="foo"
+          multiLine
           className={classes.input}
         />
         <TextField
@@ -47,6 +49,7 @@ export default class TextFields extends Component {
           id="required"
           label="Required"
           defaultValue="Hello World"
+          multiLine
           className={classes.input}
         />
         <TextField
@@ -54,12 +57,14 @@ export default class TextFields extends Component {
           id="error"
           label="Error"
           defaultValue="Hello World"
+          multiLine
           className={classes.input}
         />
         <TextField
           id="password"
           label="Password"
           className={classes.input}
+          multiLine
           type="password"
         />
       </div>

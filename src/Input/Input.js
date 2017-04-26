@@ -1,23 +1,29 @@
 // @flow weak
 
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { createStyleSheet } from 'jss-theme-reactor';
 import customPropTypes from '../utils/customPropTypes';
+import Textarea from './Textarea';
 
 function isDirty(obj) {
   return obj && obj.value && obj.value.length > 0;
 }
 
 export const styleSheet = createStyleSheet('MuiInput', (theme) => {
-  const { palette, transitions } = theme;
+  const { palette, transitions, typography } = theme;
   return {
     wrapper: {
       // Mimics the default input display property used by browsers for an input.
       display: 'inline-block',
       position: 'relative',
-      fontFamily: theme.typography.fontFamily,
+      fontFamily: typography.fontFamily,
+      transition: transitions.create('height', {
+        duration: 100,
+        easing: transitions.easing.easeOut,
+      }),
     },
     formControl: {
       marginTop: 10,
@@ -68,6 +74,9 @@ export const styleSheet = createStyleSheet('MuiInput', (theme) => {
       '&::-webkit-search-decoration': { // Remove the padding when type=search.
         appearance: 'none',
       },
+    },
+    textareaWrapper: {
+      padding: '6px 0',
     },
     disabled: {
       color: theme.palette.text.disabled,
@@ -183,7 +192,8 @@ export default class Input extends Component {
     }
   }
 
-  // Holds the input reference
+  // Holds the container and input reference
+  wrapper = null;
   input = null;
 
   focus = () => this.input.focus();
@@ -209,6 +219,13 @@ export default class Input extends Component {
     if (this.props.onChange) {
       this.props.onChange(event);
     }
+  };
+
+  handleTextareaHeightChange = (event, newHeight) => {
+    const node = findDOMNode(this)
+    setTimeout(() => {
+      node.style.height = `${node.children[0].clientHeight}px`
+    }, 0)
   };
 
   isControlled() {
@@ -239,11 +256,12 @@ export default class Input extends Component {
   render() {
     const {
       className: classNameProp,
-      component: ComponentProp,
       inputClassName: inputClassNameProp,
+      component,
       disabled,
       disableUnderline,
       error: errorProp,
+      multiLine,
       onBlur, // eslint-disable-line no-unused-vars
       onFocus, // eslint-disable-line no-unused-vars
       onChange, // eslint-disable-line no-unused-vars
@@ -259,25 +277,43 @@ export default class Input extends Component {
       error = muiFormControl.error;
     }
 
+    const { ComponentProp, props: componentProps } = (() => {
+      if (multiLine && component === this.constructor.defaultProps.component){
+        const props = {
+          className: classNames(classes.textareaWrapper),
+          textareaClassName: classNames(classes.input, classes.textarea, {
+            [classes.disabled]: disabled,
+          }, inputClassNameProp),
+          onHeightChange: this.handleTextareaHeightChange
+        }
+        return { ComponentProp: Textarea, props }
+      } else {
+        const props = {
+          className: classNames(classes.input, {
+            [classes.underline]: !disableUnderline,
+            [classes.disabled]: disabled,
+          }, inputClassNameProp),
+        }
+        return { ComponentProp: component, props }
+      }
+    })()
+
     const wrapperClassName = classNames(classes.wrapper, {
       [classes.formControl]: muiFormControl,
       [classes.inkbar]: !disableUnderline,
       [classes.focused]: this.state.focused,
       [classes.error]: error,
+      // When rendering Textarea, move the underline to this height-animatable wrapper
+      [classes.underline]: ComponentProp === Textarea && !disableUnderline,
     }, classNameProp);
-
-    const inputClassName = classNames(classes.input, {
-      [classes.underline]: !disableUnderline,
-      [classes.disabled]: disabled,
-    }, inputClassNameProp);
 
     const required = muiFormControl && muiFormControl.required === true;
 
     return (
-      <div className={wrapperClassName}>
+      <div className={wrapperClassName} ref={(c) => { this.wrapper = c; }}>
         <ComponentProp
+          {...componentProps}
           ref={(c) => { this.input = c; }}
-          className={inputClassName}
           onBlur={this.handleBlur}
           onFocus={this.handleFocus}
           onChange={this.handleChange}

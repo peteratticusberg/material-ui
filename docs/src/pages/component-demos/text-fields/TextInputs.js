@@ -22,20 +22,24 @@ export default function TextInputs(props, context) {
       <Input
         defaultValue="Hello world"
         className={classes.input}
+        multiLine
       />
       <Input
         placeholder="Placeholder"
         className={classes.input}
+        multiLine
       />
       <Input
         value="Disabled"
         className={classes.input}
         disabled
+        multiLine
       />
       <Input
         defaultValue="Error"
         className={classes.input}
         error
+        multiLine
       />
     </div>
   );
