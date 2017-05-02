@@ -31,6 +31,7 @@ export const styleSheet = createStyleSheet('MuiTextarea', (theme) => {
       visibility: 'hidden',
       position: 'absolute',
       height: 'auto',
+      whiteSpace: 'pre-wrap',
     },
   };
 });
