@@ -1,6 +1,7 @@
+// @flow weak
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { createStyleSheet } from 'jss-theme-reactor';
 import classnames from 'classnames';
 import EventListener from 'react-event-listener';
@@ -8,7 +9,7 @@ import customPropTypes from '../utils/customPropTypes';
 
 const rowsHeight = 24;
 
-export const styleSheet = createStyleSheet('MuiTextarea', (theme) => {
+export const styleSheet = createStyleSheet('MuiTextarea', () => {
   return {
     root: {
       position: 'relative', // because the shadow has position: 'absolute',
@@ -40,7 +41,15 @@ export const styleSheet = createStyleSheet('MuiTextarea', (theme) => {
  * Input
  */
 export default class Textarea extends Component {
+  shadow: HTMLInputElement;
+  singleLineShadow: HTMLInputElement;
+  input: HTMLInputElement;
+
   static propTypes = {
+    /**
+     * Override the inline-styles of the root element.
+     */
+    className: PropTypes.string,
     defaultValue: PropTypes.any,
     disabled: PropTypes.bool,
     hintText: PropTypes.string,
@@ -49,10 +58,6 @@ export default class Textarea extends Component {
     rows: PropTypes.number,
     rowsMax: PropTypes.number,
     shadowClassName: PropTypes.object,
-    /**
-     * Override the inline-styles of the root element.
-     */
-    className: PropTypes.string,
     textareaClassName: PropTypes.string,
     value: PropTypes.string,
   };
@@ -91,7 +96,7 @@ export default class Textarea extends Component {
   };
 
   getInputNode() {
-    return this.refs.input;
+    return this.input;
   }
 
   setValue(value) {
@@ -100,17 +105,17 @@ export default class Textarea extends Component {
   }
 
   syncHeightWithShadow(newValue, event, props) {
-    const shadow = this.refs.shadow;
-    const singleLineShadow = this.refs.singleLineShadow;
+    const shadow = this.shadow;
+    const singleLineShadow = this.singleLineShadow;
 
-    const displayText = this.props.hintText && (newValue === '' || newValue === undefined || newValue === null) ?
-      this.props.hintText : newValue;
+    const hasNewValue = (newValue && newValue !== '');
+    const displayText = this.props.hintText && !hasNewValue ? this.props.hintText : newValue;
 
     if (displayText !== undefined) {
       shadow.value = displayText;
     }
 
-    let lineHeight = singleLineShadow.scrollHeight;
+    const lineHeight = singleLineShadow.scrollHeight;
     let newHeight = shadow.scrollHeight;
 
     // Guarding for jsdom, where scrollHeight isn't present.
@@ -163,25 +168,25 @@ export default class Textarea extends Component {
       <div className={classnames(classes.root, className)}>
         <EventListener target="window" onResize={this.handleResize} />
         <textarea
-          ref="singleLineShadow"
+          ref={(c) => { this.singleLineShadow = c; }}
           className={classnames(classes.shadow, classes.textarea)}
           tabIndex="-1"
           rows={1}
-          readOnly={true}
+          readOnly
           value={''}
         />
         <textarea
-          ref="shadow"
+          ref={(c) => { this.shadow = c; }}
           className={classnames(classes.shadow, classes.textarea)}
           tabIndex="-1"
           rows={this.props.rows}
           defaultValue={this.props.defaultValue}
-          readOnly={true}
+          readOnly
           value={this.props.value}
         />
         <textarea
           {...other}
-          ref="input"
+          ref={(c) => { this.input = c; }}
           rows={this.props.rows}
           className={classnames(classes.textarea, textareaClassName)}
           style={{ height: this.state.height }}
