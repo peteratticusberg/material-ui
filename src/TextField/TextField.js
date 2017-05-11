@@ -92,6 +92,7 @@ export default class TextField extends Component {
       required,
       type,
       value,
+      multiLine,
       ...other
     } = this.props;
 
@@ -113,6 +114,7 @@ export default class TextField extends Component {
           name={name}
           type={type}
           disabled={disabled}
+          multiLine={multiLine}
           {...inputProps}
         />
       </FormControl>
