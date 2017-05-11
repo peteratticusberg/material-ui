@@ -13,16 +13,15 @@ function isDirty(obj) {
 }
 
 export const styleSheet = createStyleSheet('MuiInput', (theme) => {
-  const { palette, transitions, typography } = theme;
   return {
     wrapper: {
       // Mimics the default input display property used by browsers for an input.
       display: 'inline-block',
       position: 'relative',
-      fontFamily: typography.fontFamily,
-      transition: transitions.create('height', {
+      fontFamily: theme.typography.fontFamily,
+      transition: theme.transitions.create('height', {
         duration: 100,
-        easing: transitions.easing.easeOut,
+        easing: theme.transitions.easing.easeOut,
       }),
     },
     formControl: {
@@ -125,6 +124,10 @@ export default class Input extends Component {
      */
     inputClassName: PropTypes.string,
     /**
+    * If `true`, the input will accommodate multiple lines of text.
+    */
+    multiLine: PropTypes.bool,
+    /**
      * @ignore
      */
     onBlur: PropTypes.func,
@@ -221,11 +224,11 @@ export default class Input extends Component {
     }
   };
 
-  handleTextareaHeightChange = (event, newHeight) => {
-    const node = findDOMNode(this)
+  handleTextareaHeightChange = () => {
+    const node: any = findDOMNode(this);
     setTimeout(() => {
-      node.style.height = `${node.children[0].clientHeight}px`
-    }, 0)
+      node.style.height = `${node.children[0].clientHeight}px`;
+    }, 0);
   };
 
   isControlled() {
@@ -278,25 +281,24 @@ export default class Input extends Component {
     }
 
     const { ComponentProp, props: componentProps } = (() => {
-      if (multiLine && component === this.constructor.defaultProps.component){
+      if (multiLine && component === this.constructor.defaultProps.component) {
         const props = {
           className: classNames(classes.textareaWrapper),
           textareaClassName: classNames(classes.input, classes.textarea, {
             [classes.disabled]: disabled,
           }, inputClassNameProp),
-          onHeightChange: this.handleTextareaHeightChange
-        }
-        return { ComponentProp: Textarea, props }
-      } else {
-        const props = {
-          className: classNames(classes.input, {
-            [classes.underline]: !disableUnderline,
-            [classes.disabled]: disabled,
-          }, inputClassNameProp),
-        }
-        return { ComponentProp: component, props }
+          onHeightChange: this.handleTextareaHeightChange,
+        };
+        return { ComponentProp: Textarea, props };
       }
-    })()
+      const props = {
+        className: classNames(classes.input, {
+          [classes.underline]: !disableUnderline,
+          [classes.disabled]: disabled,
+        }, inputClassNameProp),
+      };
+      return { ComponentProp: component, props };
+    })();
 
     const wrapperClassName = classNames(classes.wrapper, {
       [classes.formControl]: muiFormControl,
