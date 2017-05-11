@@ -60,7 +60,7 @@ class TextFields extends Component {
         />
         <TextField
           id="multiline"
-          multiLine
+          multiline
           label="Multi-line"
           className={classes.input}
         />

@@ -126,7 +126,7 @@ export default class Input extends Component {
     /**
     * If `true`, the input will accommodate multiple lines of text.
     */
-    multiLine: PropTypes.bool,
+    multiline: PropTypes.bool,
     /**
      * @ignore
      */
@@ -264,7 +264,7 @@ export default class Input extends Component {
       disabled,
       disableUnderline,
       error: errorProp,
-      multiLine,
+      multiline,
       onBlur, // eslint-disable-line no-unused-vars
       onFocus, // eslint-disable-line no-unused-vars
       onChange, // eslint-disable-line no-unused-vars
@@ -281,7 +281,7 @@ export default class Input extends Component {
     }
 
     const { ComponentProp, props: componentProps } = (() => {
-      if (multiLine && component === this.constructor.defaultProps.component) {
+      if (multiline && component === this.constructor.defaultProps.component) {
         const props = {
           className: classNames(classes.textareaWrapper),
           textareaClassName: classNames(classes.input, classes.textarea, {
